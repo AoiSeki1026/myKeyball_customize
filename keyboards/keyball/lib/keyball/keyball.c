@@ -222,10 +222,10 @@ __attribute__((weak)) void keyball_on_apply_motion_to_mouse_scroll(keyball_motio
     // New behavior
     switch (keyball_get_scrollsnap_mode()) {
         case KEYBALL_SCROLLSNAP_MODE_VERTICAL:
-            r->v = r->v;
+            r->h = 0;
             break;
         case KEYBALL_SCROLLSNAP_MODE_HORIZONTAL:
-            r->h = r->h;
+            r->v = 0;
             break;
         default:
             // pass by without doing anything
