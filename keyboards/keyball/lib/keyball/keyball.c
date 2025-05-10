@@ -401,7 +401,7 @@ void keyball_oled_render_ballinfo(void) {
     oled_write(format_4d(keyball_get_cpi()) + 1, false);
     oled_write_P(PSTR("00 "), false);
 
-    // indicate scroll snap mode: "VT" (vertical), "HN" (horiozntal), and "SCR" (free)
+    // indicate scroll snap mode: "VT" (vertical), "HO" (horizontal), and "SCR" (free)
 #if 1 && KEYBALL_SCROLLSNAP_ENABLE == 2
     switch (keyball_get_scrollsnap_mode()) {
         case KEYBALL_SCROLLSNAP_MODE_VERTICAL:
@@ -480,12 +480,10 @@ void keyball_oled_render_layerinfo(void) {
     //     Layer:-23------------
     //
     oled_write_P(PSTR("L\xB6\xB7r\xB1"), false);
-
-    //seki
     for (uint8_t i = 1; i < 8; i++) {
-        oled_write_char((0 & (1UL << i)) ? to_1x(i) : BL, false);
+        oled_write_char((layer_state_is(i) ? to_1x(i) : BL), false);
     }
-        oled_write_char(' ', false);
+    oled_write_char(' ', false);
 
 #    ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     oled_write_P(PSTR("\xC2\xC3"), false);
