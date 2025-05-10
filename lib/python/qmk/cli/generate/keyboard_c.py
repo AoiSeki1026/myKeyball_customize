@@ -81,12 +81,12 @@ def _gen_matrix_mask(info_data):
             mask[row][col] = '1'
 
     lines = []
-    lines.append('#ifdef MATRIX_MASKED')
-    lines.append('__attribute__((weak)) const matrix_row_t matrix_mask[] = {')
-    for i in range(rows):
-        lines.append(f'    0b{"".join(reversed(mask[i]))},')
-    lines.append('};')
-    lines.append('#endif')
+#    lines.append('#ifdef MATRIX_MASKED')
+#    lines.append('__attribute__((weak)) const matrix_row_t matrix_mask[] = {')
+#    for i in range(rows):
+#        lines.append(f'    0b{"".join(reversed(mask[i]))},')
+#    lines.append('};')
+#    lines.append('#endif')
 
     return lines
 

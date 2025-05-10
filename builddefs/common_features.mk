@@ -694,7 +694,7 @@ ifeq ($(strip $(SPLIT_KEYBOARD)), yes)
 
         OPT_DEFS += -DSERIAL_DRIVER_$(strip $(shell echo $(SERIAL_DRIVER) | tr '[:lower:]' '[:upper:]'))
         ifeq ($(strip $(SERIAL_DRIVER)), bitbang)
-            QUANTUM_LIB_SRC += serial.c
+            #QUANTUM_LIB_SRC += serial.c
         else
             QUANTUM_LIB_SRC += serial_protocol.c
             QUANTUM_LIB_SRC += serial_$(strip $(SERIAL_DRIVER)).c

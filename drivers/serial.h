@@ -19,7 +19,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <transactions.h>
 
 // initiator is transaction start side
 void soft_serial_initiator_init(void);

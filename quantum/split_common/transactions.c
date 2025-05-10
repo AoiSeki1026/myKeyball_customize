@@ -139,9 +139,9 @@ static bool transaction_handler_master(matrix_row_t master_matrix[], matrix_row_
  */
 #define TRANSACTION_HANDLER_SLAVE_AUTOLOCK(prefix)            \
     do {                                                      \
-        split_shared_memory_lock();                           \
+                                   \
         prefix##_handlers_slave(master_matrix, slave_matrix); \
-        split_shared_memory_unlock();                         \
+                                 \
     } while (0)
 
 inline static bool read_if_checksum_mismatch(int8_t trans_id_checksum, int8_t trans_id_retrieve, uint32_t *last_update, void *destination, const void *equiv_shmem, size_t length) {
@@ -437,10 +437,10 @@ static bool mods_handlers_master(matrix_row_t master_matrix[], matrix_row_t slav
 }
 
 static void mods_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
+    
     split_mods_sync_t mods;
     memcpy(&mods, &split_shmem->mods, sizeof(split_mods_sync_t));
-    split_shared_memory_unlock();
+    
 
     set_mods(mods.real_mods);
     set_weak_mods(mods.weak_mods);
@@ -474,9 +474,9 @@ static bool backlight_handlers_master(matrix_row_t master_matrix[], matrix_row_t
 }
 
 static void backlight_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
+    
     uint8_t backlight_level = split_shmem->backlight_level;
-    split_shared_memory_unlock();
+    
 
     backlight_level_noeeprom(backlight_level);
 }
@@ -511,12 +511,12 @@ static bool rgblight_handlers_master(matrix_row_t master_matrix[], matrix_row_t 
 }
 
 static void rgblight_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
+    
     // Update the RGB with the new data
     rgblight_syncinfo_t rgblight_sync;
     memcpy(&rgblight_sync, &split_shmem->rgblight_sync, sizeof(rgblight_syncinfo_t));
     split_shmem->rgblight_sync.status.change_flags = 0;
-    split_shared_memory_unlock();
+    
 
     if (rgblight_sync.status.change_flags != 0) {
         rgblight_update_sync(&rgblight_sync, false);
@@ -549,10 +549,10 @@ static bool led_matrix_handlers_master(matrix_row_t master_matrix[], matrix_row_
 }
 
 static void led_matrix_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
+    
     memcpy(&led_matrix_eeconfig, &split_shmem->led_matrix_sync.led_matrix, sizeof(led_eeconfig_t));
     bool led_suspend_state = split_shmem->led_matrix_sync.led_suspend_state;
-    split_shared_memory_unlock();
+    
 
     led_matrix_set_suspend_state(led_suspend_state);
 }
@@ -583,10 +583,10 @@ static bool rgb_matrix_handlers_master(matrix_row_t master_matrix[], matrix_row_
 }
 
 static void rgb_matrix_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
+    
     memcpy(&rgb_matrix_config, &split_shmem->rgb_matrix_sync.rgb_matrix, sizeof(rgb_config_t));
     bool rgb_suspend_state = split_shmem->rgb_matrix_sync.rgb_suspend_state;
-    split_shared_memory_unlock();
+    
 
     rgb_matrix_set_suspend_state(rgb_suspend_state);
 }
@@ -642,9 +642,7 @@ static bool oled_handlers_master(matrix_row_t master_matrix[], matrix_row_t slav
 }
 
 static void oled_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
     uint8_t current_oled_state = split_shmem->current_oled_state;
-    split_shared_memory_unlock();
 
     if (current_oled_state) {
         oled_on();
@@ -677,9 +675,9 @@ static bool st7565_handlers_master(matrix_row_t master_matrix[], matrix_row_t sl
 }
 
 static void st7565_handlers_slave(matrix_row_t master_matrix[], matrix_row_t slave_matrix[]) {
-    split_shared_memory_lock();
+    
     uint8_t current_st7565_state = split_shmem->current_st7565_state;
-    split_shared_memory_unlock();
+    
 
     if (current_st7565_state) {
         st7565_on();
@@ -755,10 +753,10 @@ static void pointing_handlers_slave(matrix_row_t master_matrix[], matrix_row_t s
 
     uint16_t temp_cpi = !pointing_device_driver.get_cpi ? 0 : pointing_device_driver.get_cpi(); // check for NULL
 
-    split_shared_memory_lock();
+    
     split_slave_pointing_sync_t pointing;
     memcpy(&pointing, &split_shmem->pointing, sizeof(split_slave_pointing_sync_t));
-    split_shared_memory_unlock();
+    
 
     if (pointing.cpi && pointing.cpi != temp_cpi && pointing_device_driver.set_cpi) {
         pointing_device_driver.set_cpi(pointing.cpi);
@@ -768,9 +766,9 @@ static void pointing_handlers_slave(matrix_row_t master_matrix[], matrix_row_t s
     // Now update the checksum given that the pointing has been written to
     pointing.checksum = crc8(&pointing.report, sizeof(report_mouse_t));
 
-    split_shared_memory_lock();
+    
     memcpy(&split_shmem->pointing, &pointing, sizeof(split_slave_pointing_sync_t));
-    split_shared_memory_unlock();
+    
 }
 
 #    define TRANSACTIONS_POINTING_MASTER() TRANSACTION_HANDLER_MASTER(pointing)
