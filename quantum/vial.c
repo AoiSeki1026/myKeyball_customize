@@ -494,20 +494,20 @@ static void reload_tap_dance(void) {
 #endif
 
 #ifdef TAPPING_TERM_PER_KEY
-uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-#ifdef VIAL_TAP_DANCE_ENABLE
-    if (keycode >= QK_TAP_DANCE && keycode <= QK_TAP_DANCE_MAX) {
-        vial_tap_dance_entry_t td;
-        if (dynamic_keymap_get_tap_dance(keycode & 0xFF, &td) == 0)
-            return td.custom_tapping_term;
-    }
-#endif
-#ifdef QMK_SETTINGS
-    return qs_get_tapping_term(keycode, record);
-#else
-    return TAPPING_TERM;
-#endif
-}
+//uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+//#ifdef VIAL_TAP_DANCE_ENABLE
+//    if (keycode >= QK_TAP_DANCE && keycode <= QK_TAP_DANCE_MAX) {
+//        vial_tap_dance_entry_t td;
+//        if (dynamic_keymap_get_tap_dance(keycode & 0xFF, &td) == 0)
+//            return td.custom_tapping_term;
+//    }
+//#endif
+//#ifdef QMK_SETTINGS
+//    return qs_get_tapping_term(keycode, record);
+//#else
+//    return TAPPING_TERM;
+//#endif
+//}
 #endif
 
 #ifdef VIAL_COMBO_ENABLE

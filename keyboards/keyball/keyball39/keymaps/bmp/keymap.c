@@ -24,12 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // keymap for default (VIA)
   [0] = LAYOUT_universal(
-    KC_Q         , KC_W         , KC_E      , KC_R            , KC_T             ,                             KC_Y            , KC_U            , KC_I     , KC_O     , KC_P     ,
-    KC_A         , KC_S         , KC_D      , KC_F            , KC_G             ,                             KC_H            , KC_J            , KC_K     , KC_L     , KC_SCLN  ,
-    KC_Z         , KC_X         , KC_C      , KC_V            , KC_B             ,                             KC_N            , KC_M            , KC_COMM  , KC_DOT   , KC_SLSH  ,
-    KC_LCTL      , KC_LGUI      , KC_LALT   , LT(3,KC_LNG2)   , LT(1,KC_SPC)     ,  LT(2,KC_LNG1) , KC_BSPC ,  LT(2,KC_ENT)    , LSFT_T(KC_LNG2) , KC_RALT  , KC_RGUI  , KC_RSFT
+    LT(3, KC_Q)   , KC_W            , KC_E            , KC_R              , KC_T,                             KC_Y              , KC_U              , KC_I           , KC_O           , KC_P,
+    LGUI_T(KC_A)  , LCTL_T(KC_S)    , LALT_T(KC_D)    , LSFT_T(KC_F)      , LT(1, KC_G),                      LT(1, KC_H)       , RSFT_T(KC_J)      , RALT_T(KC_K)   , RCTL_T(KC_L)   , RGUI_T(KC_MINS),
+    KC_Z          , KC_X            , KC_C            , KC_V              , LT(2, KC_B),                      LT(2, KC_N)       , KC_M              , KC_COMM        , KC_DOT         , KC_SLSH,
+    KC_TAB        , _______         , _______         , LT(3, KC_GRAVE)    , LT(1, KC_SPC),  KC_BTN1 ,  KC_BTN2 , LT(2, KC_ENT)    , _______           , _______        , _______        , KC_BSPC
   ),
-
+  
   [1] = LAYOUT_universal(
     KC_ESC       , KC_F1        , KC_F2     , KC_F3           , KC_F4            ,                            KC_BTN5          , _______         , KC_PGUP  , _______  , C(KC_KP_PLUS)   ,
     KC_TAB       , KC_F5        , KC_F6     , KC_F7           , KC_F8            ,                            KC_BTN4          , KC_BTN1         , KC_BTN3  , KC_BTN2  , _______         ,
@@ -109,4 +109,43 @@ void keyboard_post_init_user(void) {
 #if defined(OS_DETECTION_ENABLE) && defined(DEFERRED_EXEC_ENABLE)
     defer_exec(100, os_detect_callback, NULL);
 #endif
+}
+
+// A) しきい（上限）の個別調整
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case LT(0, KC_SPC):     // 親指スペース=レイヤータップ
+        case LCTL_T(KC_A):         // ホーム行Mod-Tapの例
+            return 250;
+    }
+    return TAPPING_TERM;
+}
+
+// B) 「重なったら即ホールド」の適用対象を限定
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case LT(0, KC_SPC):
+        case LCTL_T(KC_A):
+            return true;           // このキーは重なり→即ホールド
+    }
+    return false;                  // それ以外はデフォルト
+}
+
+// C) Flow Tap の適用範囲（デフォルト準拠：アルファ/スペース）
+bool is_flow_tap_key(keyrecord_t* record, uint16_t keycode) {
+    switch (get_event_keycode(record->event, keycode)) {
+        case KC_SPC:
+        case KC_A ... KC_Z:
+        case KC_DOT: case KC_COMM: case KC_SCLN: case KC_SLSH:
+            return true;
+    }
+    return false;
+}
+
+// D) Flow Tap の時間（必要ならキー別に変える）
+uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record, uint16_t prev_keycode) {
+    if (is_flow_tap_key(record, keycode) && is_flow_tap_key(record, prev_keycode)) {
+        return FLOW_TAP_TERM;  // 例：150ms
+    }
+    return 0;  // 0でFlow Tap無効（この条件では使わない）
 }

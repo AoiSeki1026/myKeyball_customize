@@ -22,6 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define TAPPING_TERM 250 //seki old -> 200
 #endif
 
+/* Dual-role keys setting */
+#define HOLD_ON_OTHER_KEY_PRESS    // 重なったら即ホールドに倒す基本線
+#define FLOW_TAP_TERM 150          // 直前キーから150ms以内はタップ優先（Flow Tap）
+#define CHORDAL_HOLD               // 同手の“転がし”はタップに倒す補助
+#ifndef TAPPING_TERM_PER_KEY
+    #define TAPPING_TERM_PER_KEY
+#endif
+#ifndef HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+    #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#endif
+
 /* period of quick tap(ms) */
 #if !defined(QUICK_TAP_TERM) || QUICK_TAP_TERM > TAPPING_TERM
 #    define QUICK_TAP_TERM TAPPING_TERM
