@@ -29,20 +29,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Z          , KC_X            , KC_C            , KC_V              , LT(2, KC_B),                      LT(2, KC_N)       , KC_M              , KC_COMM        , KC_DOT         , KC_SLSH,
     KC_TAB        , _______         , _______         , LT(3, KC_GRAVE)    , LT(1, KC_SPC),  KC_BTN1 ,  KC_BTN2 , LT(2, KC_ENT)    , _______           , _______        , _______        , KC_BSPC
   ),
-  
-  [1] = LAYOUT_universal(
-    KC_ESC       , KC_F1        , KC_F2     , KC_F3           , KC_F4            ,                            KC_BTN5          , _______         , KC_PGUP  , _______  , C(KC_KP_PLUS)   ,
-    KC_TAB       , KC_F5        , KC_F6     , KC_F7           , KC_F8            ,                            KC_BTN4          , KC_BTN1         , KC_BTN3  , KC_BTN2  , _______         ,
-    S(KC_TAB)    , KC_F9        , KC_F10    , KC_F11          , KC_F12           ,                            _______          , _______         , KC_PGDN  , _______  , C(KC_KP_MINUS)  ,
-    KC_LCTL      , KC_LGUI      , S(KC_3)   , _______         , _______          , _______        , KC_DEL  , TO(0)            , _______         , KC_RALT  , KC_RGUI  , KC_RSFT
-  ),
 
-  [2] = LAYOUT_universal(
+  [1] = LAYOUT_universal(
     KC_ESC       , KC_7         , KC_8      , KC_9            , KC_MINS          ,                            KC_RIGHT_BRACKET , KC_HOME         , KC_UP    , KC_PGUP  , KC_LEFT_BRACKET  ,
     KC_TAB       , KC_4         , KC_5      , KC_6            , S(KC_SEMICOLON)  ,                            KC_NONUS_HASH    , KC_LEFT         , KC_DOWN  , KC_RGHT  , KC_QUOT  ,
     S(KC_TAB)    , KC_1         , KC_2      , KC_3            , S(KC_EQUAL)      ,                            _______          , KC_END          , _______  , KC_PGDN  , KC_INT1  ,
     KC_LCTL      , KC_0         , KC_DOT    , _______         , _______          , _______        , _______ , TO(0)            , _______         , _______  , _______  , KC_RSFT 
   ), 
+
+  [2] = LAYOUT_universal(
+    KC_ESC       , KC_F1        , KC_F2     , KC_F3           , KC_F4            ,                            KC_BTN5          , _______         , KC_PGUP  , _______  , C(KC_KP_PLUS)   ,
+    KC_TAB       , KC_F5        , KC_F6     , KC_F7           , KC_F8            ,                            KC_BTN4          , KC_BTN1         , KC_BTN3  , KC_BTN2  , _______         ,
+    S(KC_TAB)    , KC_F9        , KC_F10    , KC_F11          , KC_F12           ,                            _______          , _______         , KC_PGDN  , _______  , C(KC_KP_MINUS)  ,
+    KC_LCTL      , KC_LGUI      , S(KC_3)   , _______         , _______          , _______        , KC_DEL  , TO(0)            , _______         , KC_RALT  , KC_RGUI  , KC_RSFT
+  ),
 
   [3] = LAYOUT_universal(
     KC_SYSTEM_POWER , AML_TO    , AML_I50   , AML_D50         , QK_RBT           ,                            QK_KB_3          , QK_KB_4         , QK_KB_5  , QK_KB_6  , QK_KB_7 ,
@@ -54,8 +54,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // clang-format on
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    // Auto enable scroll mode when the highest layer is 2
-    keyball_set_scroll_mode(get_highest_layer(state) == 2);
+    // Auto enable scroll mode when the highest layer is 1
+    keyball_set_scroll_mode(get_highest_layer(state) == 1);
 
     return state;
 }
