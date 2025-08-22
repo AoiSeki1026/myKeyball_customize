@@ -22,12 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  // keymap for default (VIA)
   [0] = LAYOUT_universal(
     LT(3, KC_Q)   , KC_W            , KC_E            , KC_R              , KC_T,                             KC_Y              , KC_U              , KC_I           , KC_O           , KC_P,
     LGUI_T(KC_A)  , LCTL_T(KC_S)    , LALT_T(KC_D)    , LSFT_T(KC_F)      , LT(1, KC_G),                      LT(1, KC_H)       , RSFT_T(KC_J)      , RALT_T(KC_K)   , RCTL_T(KC_L)   , RGUI_T(KC_MINS),
     KC_Z          , KC_X            , KC_C            , KC_V              , LT(2, KC_B),                      LT(2, KC_N)       , KC_M              , KC_COMM        , KC_DOT         , KC_SLSH,
-    KC_TAB        , _______         , _______         , LT(3, KC_GRAVE)    , LT(1, KC_SPC),  KC_BTN1 ,  KC_BTN2 , LT(2, KC_ENT)    , _______           , _______        , _______        , KC_BSPC
+    KC_TAB        , _______         , _______         , LT(1, KC_GRAVE)   , KC_SPC,        KC_BTN1 ,  KC_BTN2 , LT(2, KC_ENT)    , _______           , _______        , _______      , KC_BSPC
   ),
 
   [1] = LAYOUT_universal(
