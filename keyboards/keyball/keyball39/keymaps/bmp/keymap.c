@@ -24,9 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_universal(
     LT(3, KC_Q)   , KC_W            , KC_E            , KC_R              , KC_T,                             KC_Y              , KC_U              , KC_I           , KC_O           , KC_P,
-    LGUI_T(KC_A)  , LCTL_T(KC_S)    , LALT_T(KC_D)    , LSFT_T(KC_F)      , LT(1, KC_G),                      LT(1, KC_H)       , RSFT_T(KC_J)      , RALT_T(KC_K)   , RCTL_T(KC_L)   , RGUI_T(KC_MINS),
+    LGUI_T(KC_A)  , LALT_T(KC_S)    , LCTL_T(KC_D)    , LSFT_T(KC_F)      , LT(1, KC_G),                      LT(1, KC_H)       , RSFT_T(KC_J)      , RCTL_T(KC_K)   , RALT_T(KC_L)   , RGUI_T(KC_MINS),
     KC_Z          , KC_X            , KC_C            , KC_V              , LT(2, KC_B),                      LT(2, KC_N)       , KC_M              , KC_COMM        , KC_DOT         , KC_SLSH,
-    KC_TAB        , _______         , _______         , LT(1, KC_GRAVE)   , KC_SPC,        KC_BTN1 ,  KC_BTN2 , LT(2, KC_ENT)    , _______           , _______        , _______      , KC_BSPC
+    KC_TAB        , _______         , _______         , LT(1, KC_GRAVE)   , KC_SPC,        KC_BTN1 ,  KC_BTN2 , LT(2, KC_ENT)   , _______           , _______        , _______        , KC_BSPC
   ),
 
   [1] = LAYOUT_universal(
@@ -147,4 +147,76 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t* record, uint16_t prev_
         return FLOW_TAP_TERM;  // 例：150ms
     }
     return 0;  // 0でFlow Tap無効（この条件では使わない）
+}
+
+// 先に ACTION 関数のプロトタイプだけ宣言しておく（本体は後で定義）
+static inline void ArrowR_send(void);
+static inline void ArrowL_send(void);
+static inline void Parentheses_send(void);
+static inline void Brackets_send(void);
+
+// 1) 呼び方はそのまま：X(識別子, 出力 or 関数, (キー, キー[, キー]))
+//    ※キー列を「( … )」で1引数として渡す前提のままにします。
+#define SIMPLE_COMBOS(X) \
+  X(RT_TAB,         KC_TAB,            (KC_R, KC_T)) \
+  X(RT_BACKTAB,     S(KC_TAB),         (S(KC_R), S(KC_T))) \
+  X(RT_CTRLTAB,     C(KC_TAB),         (C(KC_R), C(KC_T))) \
+  X(YU_HOME,        KC_HOME,           (KC_Y, KC_U)) \
+  X(NM_END,         KC_END,            (LT(2, KC_N), KC_M)) \
+  X(LMINS_SCLN,     KC_SCLN,           (RALT_T(KC_L), RGUI_T(KC_MINS))) \
+  X(KL_QUOT,        KC_QUOT,           (RCTL_T(KC_K) , RALT_T(KC_L))) \
+  X(OP_DELWORD,     LCTL(KC_BSPC),     (KC_O, KC_P)) \
+  X(DOTSLSH_DEL,    KC_DEL,            (KC_DOT, KC_SLSH)) \
+  X(WER_TOGG,       CW_TOGG,           (KC_W, KC_E, KC_R))
+
+  #define ACTION_COMBOS(X) \
+  X(WE_ARROWR,      ArrowR_send,       (KC_W, KC_E)) \
+  X(ER_ARROWL,      ArrowL_send,       (KC_E, KC_R)) \
+  X(SD_PARENTHESES, Parentheses_send,  (LALT_T(KC_S), LCTL_T(KC_D))) \
+  X(SD_CURLYBRACKETS, Curlybrackets_send,  (LALT_T(KC_S), LSFT_T(KC_F))) \
+  X(DF_BRACKETS,    Brackets_send,     (LCTL_T(KC_D), LSFT_T(KC_F)))
+
+// 2) ここから下は生成部。キー列を 1 引数で受けて“中で展開”する。
+//    (KC_A, KC_B) → KC_A, KC_B にするヘルパ
+#define EXPAND_KEYS(...) __VA_ARGS__
+
+// シーケンス配列生成
+#define MAKE_SEQ(name, out_or_func, pair) \
+  const uint16_t PROGMEM name##_seq[] = { EXPAND_KEYS pair, COMBO_END };
+
+// enum（インデックス）
+#define MAKE_ENUM(name, out_or_func, pair) name,
+
+// コンボ配列
+#define MAKE_COMBO(name, out, pair)   [name] = COMBO(name##_seq, out),
+#define MAKE_ACTION(name, func, pair) [name] = COMBO_ACTION(name##_seq),
+
+// ACTION の switch 用
+#define MAKE_CASE(name, func, pair) case name: func(); break;
+
+// ---- 展開 ----
+SIMPLE_COMBOS(MAKE_SEQ)
+ACTION_COMBOS(MAKE_SEQ)
+
+enum { SIMPLE_COMBOS(MAKE_ENUM) ACTION_COMBOS(MAKE_ENUM) COMBO_LEN };
+
+combo_t key_combos[COMBO_LEN] = {
+  SIMPLE_COMBOS(MAKE_COMBO)
+  ACTION_COMBOS(MAKE_ACTION)
+};
+
+// 3) ACTION 本体（tap_code/SEND_STRING の“構成”は変えません）
+static inline void ArrowR_send(void) { tap_code(KC_MINUS);tap_code16(S(KC_DOT)); }
+static inline void ArrowL_send(void) { tap_code16(S(KC_COMMA));tap_code(KC_MINUS); }
+static inline void Parentheses_send(void) { tap_code16(S(KC_8));tap_code16(S(KC_9));tap_code(KC_LEFT); }
+static inline void Brackets_send(void) { tap_code(KC_RBRC);tap_code(KC_BSLS); tap_code(KC_LEFT); }
+static inline void Curlybrackets_send(void) { tap_code16(S(KC_RBRC));tap_code16(S(KC_BSLS));tap_code(KC_LEFT); }
+
+// 4) ACTION ディスパッチ（押下時だけ発火）
+void process_combo_event(uint16_t idx, bool pressed) {
+  if (!pressed) return;
+  switch (idx) {
+    ACTION_COMBOS(MAKE_CASE)
+    default: break;
+  }
 }

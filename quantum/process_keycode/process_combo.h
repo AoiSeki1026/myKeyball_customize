@@ -64,7 +64,7 @@ typedef struct combo_t {
 
 #define COMBO_END 0
 #ifndef COMBO_TERM
-#    define COMBO_TERM 50
+#    define COMBO_TERM 70
 #endif
 #ifndef COMBO_HOLD_TERM
 #    define COMBO_HOLD_TERM TAPPING_TERM

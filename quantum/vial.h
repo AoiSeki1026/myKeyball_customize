@@ -104,7 +104,7 @@ _Static_assert(sizeof(vial_tap_dance_entry_t) == 10, "Unexpected size of the via
 
 
 #ifdef COMBO_ENABLE
-#define VIAL_COMBO_ENABLE
+//#define VIAL_COMBO_ENABLE
 
 #ifndef VIAL_COMBO_ENTRIES
     #if TOTAL_EEPROM_BYTE_COUNT > 4000
