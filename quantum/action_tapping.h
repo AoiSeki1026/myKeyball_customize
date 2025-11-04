@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* period of tapping(ms) */
 #ifndef TAPPING_TERM
-#    define TAPPING_TERM 250 //seki old -> 200
+#    define TAPPING_TERM 280 //seki old -> 200
 #endif
 
 /* Dual-role keys setting */
